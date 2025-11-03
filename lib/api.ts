@@ -1,4 +1,7 @@
-const API_BASE_URL = 'http://localhost:8080/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL 
+  ? `${process.env.NEXT_PUBLIC_API_URL}/api` 
+  : 'http://localhost:8080/api'
+
 
 const getAuthHeaders = () => {
   const token = typeof window !== 'undefined' 
@@ -9,6 +12,7 @@ const getAuthHeaders = () => {
     ...(token && { Authorization: `Bearer ${token}` }),
   }
 }
+
 
 const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   const url = `${API_BASE_URL}${endpoint}`
@@ -21,7 +25,9 @@ const apiCall = async (endpoint: string, options: RequestInit = {}) => {
     },
   }
 
+
   console.log('Request:', config.method || 'GET', url)
+
 
   try {
     const response = await fetch(url, config)
@@ -37,16 +43,19 @@ const apiCall = async (endpoint: string, options: RequestInit = {}) => {
       throw new Error(errorData.message || 'Request failed')
     }
 
+
     const data = await response.json()
     console.log('Response:', response.status, data)
     
     return data
+
 
   } catch (error: any) {
     console.error('API Error:', error)
     throw error.message || 'Request failed'
   }
 }
+
 
 const apiClient = {
   get: (endpoint: string) => apiCall(endpoint, { method: 'GET' }),
@@ -66,6 +75,7 @@ const apiClient = {
   delete: (endpoint: string) => apiCall(endpoint, { method: 'DELETE' }),
 }
 
+
 export const API_ENDPOINTS = {
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
@@ -80,5 +90,6 @@ export const API_ENDPOINTS = {
   ADMIN_USERS: '/admin/users',
   ADMIN_DASHBOARD: '/admin/dashboard',
 }
+
 
 export default apiClient
