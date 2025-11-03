@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import AuthService from '@/lib/services/authService'
@@ -24,7 +25,7 @@ type CartItem = {
   price: number
 }
 
-export default function ProductDetailsPage() {
+function ProductDetailsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { toast } = useToast()
@@ -268,5 +269,18 @@ export default function ProductDetailsPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+// Main component wrapped with Suspense
+export default function ProductDetailsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600 text-lg">Loading...</p>
+      </div>
+    }>
+      <ProductDetailsContent />
+    </Suspense>
   )
 }
